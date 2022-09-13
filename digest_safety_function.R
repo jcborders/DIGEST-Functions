@@ -89,7 +89,7 @@ digest_safety <- function(data) {
   dplyr::slice(1) |> 
   mutate(safety_score = case_when(freq_3_4 == 1 & max_pas == 3 | max_pas == 4 ~ 0, # PAS 3-4, single event
                                   freq_3_4 > 1 & max_pas == 3 | max_pas == 4 ~ 1, # PAS 3-4, multiple events
-                                  freq_5_6 == 1 & vocal_folds_severity_rating_max < 25 & max_pas == 5 | max_pas == 6 ~ 1, # PAS 5-6, single, not gross
+                                  freq_5_6 == 1 & vocal_folds_severity_rating_max <= 25 & max_pas == 5 | max_pas == 6 ~ 1, # PAS 5-6, single, not gross
                                   freq_5_6 == 1 & vocal_folds_severity_rating_max > 25 & max_pas == 5 | max_pas == 6 ~ 2, # PAS 5-6, single event, gross
                                   freq_5_6 > 1 & max_pas == 5 | max_pas == 6 ~ 2, # PAS 5-6, multiple events
                                   freq_7_8 == 1 & subglottis_severity_rating_max < 25 & freq_5_6 < 1 & max_pas == 7 | max_pas == 8 ~ 1, # PAS 7-8, single event, not gross, no PAS 5 or 6
