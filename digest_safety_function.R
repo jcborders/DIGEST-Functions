@@ -69,8 +69,13 @@ data <- sim_swallowing_data(
   trials = 10
 )
 
-# Function to calculate DIGEST safety scores
-digest_safety <- function(data) {
+# Function to calculate DIGEST safety scores, arguments specified below
+digest_safety <- function(data, # put data frame title here
+                          id, # put name of id grouping variable here
+                          pas, # put name of PAS outcome variable here
+                          vocal_folds_severity_rating, # put name of VF severity rating here
+                          subglottis_severity_rating # put name of subglottis severity rating here
+                          ) {
   data |> 
   group_by(id) |> 
   mutate(max_pas = max(pas), # max PAS
@@ -105,5 +110,10 @@ digest_safety <- function(data) {
 }
 
 # Use function to derive DIGEST safety scores
-digest_safety(data = data)
+digest_safety(data = data, # note that arguments use the same names as the data for simplicity
+              id = id,
+              pas = pas,
+              vocal_folds_severity_rating = vocal_folds_severity_rating, 
+              subglottis_severity_rating = subglottis_severity_rating)
+
   
