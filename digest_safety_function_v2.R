@@ -15,7 +15,7 @@ sim_swallowing_data <- function(between_variance,
                                 trials){
 
   
-  # Simulate Thin Liquid Data
+  # Simulate IDDSI 0 Data
   pvar <- defData(
     # specify between-subject variation
     varname = "participant_variation",
@@ -24,7 +24,7 @@ sim_swallowing_data <- function(between_variance,
     dist = "normal"
   )
   
-  defA_thin <-
+  defA_iddsi_0 <-
     defDataAdd(varname = "pas_raw",
                # specify formula to compute PAS
                formula = "1.05 + participant_variation",
@@ -39,30 +39,30 @@ sim_swallowing_data <- function(between_variance,
                numIndsVar = trials,
                level1ID = "total_trials")
   
-  dd <- addColumns(defA_thin, dd)
+  dd <- addColumns(defA_iddsi_0, dd)
   
-  pas_distribution_thin <- # probabilities for each PAS score (1-8)
+  pas_distribution_iddsi_0 <- # probabilities for each PAS score (1-8)
     c(0.323, 0.015, 0.256, 0.0076, 0.233, 0.015, 0.0526, 0.0978)
   
-  data_thin <-
+  data_iddsi_0 <-
     genOrdCat(
       # add PAS outcome
       dd,
       adjVar = "pas_raw",
-      baseprobs = pas_distribution_thin,
+      baseprobs = pas_distribution_iddsi_0,
       catVar = "pas",
       idname = "total_trials"
     )
   
-  data_thin <- data_thin |>
+  data_iddsi_0 <- data_iddsi_0 |>
     select(id, pas)  # select only ID and PAS scores
   
   
-  data_thin$pas <-
-    as.numeric(data_thin$pas) # convert PAS to numeric
+  data_iddsi_0$pas <-
+    as.numeric(data_iddsi_0$pas) # convert PAS to numeric
   
-  data_thin <-
-    data_thin |> # simulate vocal fold and subglottic residue with beta distribution (skewed right) for appropriate cases
+  data_iddsi_0 <-
+    data_iddsi_0 |> # simulate vocal fold and subglottic residue with beta distribution (skewed right) for appropriate cases
     group_by(id) |>
     mutate(
       vocal_folds_severity_rating = case_when(pas == 5 ~ rbeta(n(), 1, 9),
@@ -74,49 +74,49 @@ sim_swallowing_data <- function(between_variance,
     add_column(IDDSI = 0)
   
   
-  ## Simulate Pudding Data
-  defA_pudding <-
+  ## Simulate iddsi_4 Data
+  defA_iddsi_4 <-
     defDataAdd(varname = "pas_raw",
                # specify formula to compute PAS
                formula = "1.05 + participant_variation",
                dist = "nonrandom")
   
-  dd_pudding <- genData(sample_size, pvar) # 3 participants
+  dd_iddsi_4 <- genData(sample_size, pvar) # 3 participants
   
-  dd_pudding <-
+  dd_iddsi_4 <-
     genCluster(
-      dd_pudding,
+      dd_iddsi_4,
       # specify 10 trials per participant
       cLevelVar = "participant_variation",
       numIndsVar = trials,
       level1ID = "total_trials"
     )
   
-  dd_pudding <- addColumns(defA_pudding, dd_pudding)
+  dd_iddsi_4 <- addColumns(defA_iddsi_4, dd_iddsi_4)
   
-  pas_distribution_pudding <-
+  pas_distribution_iddsi_4 <-
     # probabilities for each PAS score (1-8)
     c(0.7, 0.015, 0.2, 0.0076, 0.366, 0.01, 0.01, 0.01)
   
-  data_pudding <-
+  data_iddsi_4 <-
     genOrdCat(
       # add PAS outcome
-      dd,
+      dd_iddsi_4,
       adjVar = "pas_raw",
-      baseprobs = pas_distribution_pudding,
+      baseprobs = pas_distribution_iddsi_4,
       catVar = "pas",
       idname = "total_trials"
     )
   
-  data_pudding <- data_pudding |>
+  data_iddsi_4 <- data_iddsi_4 |>
     select(id, pas)  # select only ID and PAS scores
   
   
-  data_pudding$pas <-
-    as.numeric(data_pudding$pas) # convert PAS to numeric
+  data_iddsi_4$pas <-
+    as.numeric(data_iddsi_4$pas) # convert PAS to numeric
   
-  data_pudding <-
-    data_pudding |> # simulate vocal fold and subglottic residue with beta distribution (skewed right) for appropriate cases
+  data_iddsi_4 <-
+    data_iddsi_4 |> # simulate vocal fold and subglottic residue with beta distribution (skewed right) for appropriate cases
     group_by(id) |>
     mutate(
       vocal_folds_severity_rating = case_when(pas == 5 ~ rbeta(n(), 1, 9),
@@ -127,8 +127,61 @@ sim_swallowing_data <- function(between_variance,
     ) |>
     add_column(IDDSI = 4)
   
+  ## Simulate IDDSI 7 Data
+  defA_iddsi_7 <-
+    defDataAdd(varname = "pas_raw",
+               # specify formula to compute PAS
+               formula = "1.05 + participant_variation",
+               dist = "nonrandom")
+  
+  dd_iddsi_7 <- genData(sample_size, pvar) # 3 participants
+  
+  dd_iddsi_7 <-
+    genCluster(
+      dd_iddsi_7,
+      # specify 10 trials per participant
+      cLevelVar = "participant_variation",
+      numIndsVar = trials,
+      level1ID = "total_trials"
+    )
+  
+  dd_iddsi_7 <- addColumns(defA_iddsi_7, dd_iddsi_7)
+  
+  pas_distribution_iddsi_7 <-
+    # probabilities for each PAS score (1-8)
+    c(0.7, 0.015, 0.2, 0.0076, 0.366, 0.01, 0.01, 0.01)
+  
+  data_iddsi_7 <-
+    genOrdCat(
+      # add PAS outcome
+      dd_iddsi_7,
+      adjVar = "pas_raw",
+      baseprobs = pas_distribution_iddsi_7,
+      catVar = "pas",
+      idname = "total_trials"
+    )
+  
+  data_iddsi_7 <- data_iddsi_7 |>
+    select(id, pas)  # select only ID and PAS scores
+  
+  
+  data_iddsi_7$pas <-
+    as.numeric(data_iddsi_7$pas) # convert PAS to numeric
+  
+  data_iddsi_7 <-
+    data_iddsi_7 |> # simulate vocal fold and subglottic residue with beta distribution (skewed right) for appropriate cases
+    group_by(id) |>
+    mutate(
+      vocal_folds_severity_rating = case_when(pas == 5 ~ rbeta(n(), 1, 9),
+                                              pas != 5 ~ NA_real_),
+      subglottis_severity_rating = case_when(pas == 7 |
+                                               pas == 8 ~ rbeta(n(), 1, 9),
+                                             pas != 7 ~ NA_real_)
+    ) |>
+    add_column(IDDSI = 7)
+  
   # Combine columns
-  data <- rbind(data_thin, data_pudding)
+  data <- rbind(data_iddsi_0, data_iddsi_4, data_iddsi_7)
 }
 
 # Simulate data
@@ -153,7 +206,8 @@ digest_safety <- function(data, # put data frame title here
     pivot_wider(names_from = "IDDSI",
                 values_from = "num_trials") |> 
     rename(IDDSI_0_trials = `0`,
-           IDDSI_4_trials = `4`)
+           IDDSI_4_trials = `4`,
+           IDDSI_7_trials = `7`)
   
   # Add these columns to full dataset
   data2 <- full_join(data, data_trials, by = "id")
@@ -168,8 +222,9 @@ digest_safety <- function(data, # put data frame title here
     pivot_wider(names_from = "IDDSI",
                 values_from = "freq_airway_invasion") |> 
     rename(IDDSI_0_freq = `0`,
-           IDDSI_4_freq = `4`) |> 
-    mutate(chronic = case_when(IDDSI_0_freq > 0 & IDDSI_4_freq > 0 ~ 1))
+           IDDSI_4_freq = `4`,
+           IDDSI_7_freq = `7`) |> 
+    mutate(chronic = case_when(IDDSI_0_freq > 0 & IDDSI_4_freq > 0 | IDDSI_0_freq > 0 & IDDSI_7_freq > 0 | IDDSI_4_freq > 0 & IDDSI_7_freq > 0 ~ 1))
   
   # Add these columns to full dataset
   data3 <- full_join(data2, freq_df, by = "id")
@@ -181,11 +236,11 @@ digest_safety <- function(data, # put data frame title here
            freq_airway_invasion = sum(pas > 2), # frequency PAS greater than 2
            freq_5_6 = sum(pas == 5 | pas == 6), # frequencies for PAS 5 & 6
            freq_7_8 = sum(pas == 7 | pas == 8), # frequency of PAS 7 or 8
-           perc_7_8_thin = freq_7_8/IDDSI_0_trials,
+           perc_7_8_iddsi_0 = freq_7_8/IDDSI_0_trials,
            pas_7_8_frequency = case_when(pas == 7 | pas == 8 & IDDSI == 0 ~ 1,
                                          pas == 7 | pas == 8 & IDDSI > 0 ~ 1),
            intermittent_IDDSI_0 = IDDSI_0_freq/IDDSI_0_trials,
-           intermittent_IDDSI_4 = IDDSI_4_freq/IDDSI_4_trials
+           intermittent_IDDSI_greater_0 = (IDDSI_4_freq + IDDSI_7_freq)/IDDSI_4_trials
     ) |> 
     top_n(1, pas) |>  # keep rows based on max PAS
     mutate( # calculate max values for VF and subglottis for when > 2 trials with same max PAS score
