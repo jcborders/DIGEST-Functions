@@ -196,8 +196,7 @@ digest_safety <- function(data, # put data frame title here
                           id, # put name of id grouping variable here
                           pas, # put name of PAS outcome variable here
                           vocal_folds_severity_rating, # put name of VF severity rating here
-                          subglottis_severity_rating, # put name of subglottis severity rating here
-                          consistency # put name of consistency variable here
+                          subglottis_severity_rating # put name of subglottis severity rating here
                           ) {
   # First calculate number of trials for each consistency
   data_trials <- data |> 
@@ -272,7 +271,6 @@ digest_safety(data = data, # note that arguments use the same names as the data 
               id = id,
               pas = pas,
               vocal_folds_severity_rating = vocal_folds_severity_rating, 
-              subglottis_severity_rating = subglottis_severity_rating,
-              consistency = consistency)
+              subglottis_severity_rating = subglottis_severity_rating)
 
   
