@@ -366,7 +366,8 @@ digest_function <- function(data, # put data frame title here
                                    safety_grade == 4 & efficiency_grade == 1 ~ 3,
                                    safety_grade == 4 & efficiency_grade == 2 ~ 3,
                                    safety_grade == 4 & efficiency_grade == 3 ~ 4,
-                                   safety_grade == 4 & efficiency_grade == 4 ~ 4))
+                                   safety_grade == 4 & efficiency_grade == 4 ~ 4)) |> 
+    select(id, max_pas, max_residue_score, safety_grade, efficiency_grade, total_grade)
   
 }
 

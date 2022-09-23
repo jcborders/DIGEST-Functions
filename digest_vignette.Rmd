@@ -3,7 +3,7 @@ title: "Calculating DIGEST Scores in R"
 author: "James C. Borders"
 output:
   rmarkdown::pdf_document:
-  rmarkdown::html_vignette:
+  # rmarkdown::html_vignette:
     fig_caption: yes
 vignette: >
   %\VignetteIndexEntry{Vignette Title}
@@ -41,7 +41,7 @@ set.seed(2022) # reproducibility
 Next, we will simulate some fake swallowing data that we will use as an example for the function. Below we have simulated 20 participants and can view the variable names.
 ```{r simulation data code, echo = FALSE}
 # Simulate fake data set to illustrate use
-sim_swallowing_data <- function(between_variance, 
+simulate_swallowing_data <- function(between_variance, 
                                 sample_size){
   # Simulate IDDSI 0 Data
   pvar <- defData(
@@ -220,20 +220,52 @@ sim_swallowing_data <- function(between_variance,
 ```
 
 ```{r simulate data}
-data_frame <- sim_swallowing_data(
+data_frame <- simulate_swallowing_data(
   between_variance = 1,
   sample_size = 20)
 
 head(data_frame)
 ```
 
-You can also import your own data. You can download a csv template [here]("https://drive.google.com/file/d/1FDZXmY_gLJPm1m5dJGCSp2E5u_2KAM9G/view?usp=sharing").
+You can also import your own data. You can download a csv template [here]("https://drive.google.com/file/d/1FDZXmY_gLJPm1m5dJGCSp2E5u_2KAM9G/view?usp=sharing") if you'd like.
 
 ```{r input own data, eval = FALSE}
 data_frame <- read.csv("your data path here.csv")
 ```
 
-Below we have the DIGEST-FEES function to calculate safety, efficiency, and total grades.
+Once you download the R script from [here]("https://github.com/jcborders/DIGEST-Functions/blob/main/digest_fees_function.R") then import the DIGEST-FEES function into R.
+```{r}
+source("digest_fees_function.R")
+```
+
+Next, we need to specify the variable names from our data set in the function. Below you'll see that my PAS variable was named "pen-asp" and my data was called "data_frame" so we had to specify these in the function. A few other notes:
+
+* IDDSI should be coded numerically according to the [IDDSI Framework]("https://iddsi.org/framework").
+* PAS should be coded numerically ranging from 1 - 8.
+* Overall pharyngeal residue, vocal fold residue, and subglottic residue should be coded as a percentage (i.e., ranging from 0 to 100).
+```{r}
+digest_fees_function(
+  data = data_frame,
+  id = id,
+  IDDSI = IDDSI,
+  pas = pen_asp,
+  percent_pharyngeal_residue,
+  vocal_folds_severity_rating,
+  subglottis_severity_rating
+)
+```
+
+The function provides
+
+* The participant's ID
+* Maximum PAS score from the protocol
+* Maximum amount of overall pharyngeal residue
+* DIGEST-FEES safety grade
+* DIGEST-FEES efficiency grade
+* DIGEST-FEES total grade
+
+# APPENDIX
+Here is the function in its totality.
 ```{r digest function, echo = TRUE}
 digest_fees_function <- function(data, # put data frame name here
                           id, # put name of id grouping variable here
@@ -407,17 +439,3 @@ digest_fees_function <- function(data, # put data frame name here
                                    safety_grade == 4 & efficiency_grade == 4 ~ 4))
 }
 ```
-
-Below we can call the function `digest_fees_function()` to calculate the scores automatically. However, keep in mind that you need to specify your variable names below. For example, my PAS variable was named "pen-asp" and my data was called "data_frame" so I had to specify these in the function.
-```{r}
-digest_fees_function(
-  data = data_frame,
-  id = id,
-  IDDSI = IDDSI,
-  pas = pen_asp,
-  percent_pharyngeal_residue,
-  vocal_folds_severity_rating,
-  subglottis_severity_rating
-)
-```
-
