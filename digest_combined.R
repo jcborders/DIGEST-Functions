@@ -183,6 +183,12 @@ sim_swallowing_data <- function(between_variance,
   
   # Combine columns
   data <- rbind(data_iddsi_0, data_iddsi_4, data_iddsi_7)
+  
+  # Convert residue amount to percentage
+  data <- data |> 
+    mutate(vocal_folds_severity_rating = vocal_folds_severity_rating*100,
+           subglottis_severity_rating = subglottis_severity_rating*100,
+           percent_pharyngeal_residue = percent_pharyngeal_residue*100)
 }
 
 # Simulate data
@@ -240,12 +246,12 @@ digest_function <- function(data, # put data frame title here
     group_by(id, IDDSI) |> 
     dplyr::slice(1) |> 
     group_by(id) |> 
-    mutate(pas_3_4_chronic_pre = case_when(perc_3_4 < .50 ~ 0, # count number of times >= 50% events
-                                           perc_3_4 >= .50 ~ 1),
-           pas_5_6_chronic_pre = case_when(perc_5_6 < .50 ~ 0,
-                                           perc_5_6 >= .50 ~ 1),
-           pas_7_8_chronic_pre = case_when(perc_7_8 < .50 ~ 0,
-                                           perc_7_8 >= .50 ~ 1),
+    mutate(pas_3_4_chronic_pre = case_when(perc_3_4 < 50 ~ 0, # count number of times >= 50% events
+                                           perc_3_4 >= 50 ~ 1),
+           pas_5_6_chronic_pre = case_when(perc_5_6 < 50 ~ 0,
+                                           perc_5_6 >= 50 ~ 1),
+           pas_7_8_chronic_pre = case_when(perc_7_8 < 50 ~ 0,
+                                           perc_7_8 >= 50 ~ 1),
            pas_3_4_chronic_pre_sum = sum(pas_3_4_chronic_pre, na.rm = T), # add up freq of these events for each consistency
            pas_5_6_chronic_pre_sum = sum(pas_5_6_chronic_pre, na.rm = T),
            pas_7_8_chronic_pre_sum = sum(pas_7_8_chronic_pre, na.rm = T)
@@ -280,15 +286,15 @@ digest_function <- function(data, # put data frame title here
       max_pas == 1 | max_pas == 2 ~ 0,
       freq_3_4 == 1 & max_pas == 3 | max_pas == 4 ~ 0, # PAS 3-4, single event
       freq_3_4 > 1 & max_pas == 3 | max_pas == 4 ~ 1, # PAS 3-4, multiple events
-      freq_5_6 == 1 & vocal_folds_severity_rating_max <= .25 & max_pas == 5 | max_pas == 6 ~ 1, # PAS 5-6, single, not gross
-      freq_5_6 == 1 & vocal_folds_severity_rating_max > .25 & max_pas == 5 | max_pas == 6 ~ 2, # PAS 5-6, single event, gross
+      freq_5_6 == 1 & vocal_folds_severity_rating_max <= 25 & max_pas == 5 | max_pas == 6 ~ 1, # PAS 5-6, single, not gross
+      freq_5_6 == 1 & vocal_folds_severity_rating_max > 25 & max_pas == 5 | max_pas == 6 ~ 2, # PAS 5-6, single event, gross
       freq_5_6 > 1 & max_pas == 5 | max_pas == 6 ~ 2, # PAS 5-6, multiple events
-      freq_7_8 == 1 & subglottis_severity_rating_max <= .25 & freq_5_6 < 1 & max_pas == 7 | max_pas == 8 ~ 1, # PAS 7-8, single event, not gross, no PAS 5 or 6
-      freq_7_8 == 1 & subglottis_severity_rating_max <= .25 & freq_5_6 >= 1 & max_pas == 7 | max_pas == 8 ~ 2, # PAS 7-8, single event, not gross, additional PAS 5 or 6's
-      freq_7_8 > 1 & pas_7_8_chronic == "intermittent" & subglottis_severity_rating_max <= .25 & max_pas == 7 | max_pas == 8 ~ 2, # PAS 7-8, less than 50%, not gross
-      freq_7_8 > 1 & pas_7_8_chronic == "chronic" | airway_invasion_multiple_consistencies == "yes" & subglottis_severity_rating_max <= .25 & max_pas == 7 | max_pas == 8 ~ 3, # PAS 7-8, chronic, not gross
-      freq_7_8 >= 1 & pas_7_8_chronic == "intermittent" & subglottis_severity_rating_max > .25 & max_pas == 7 | max_pas == 8 ~ 3, # PAS 7-8, less than 50%, gross
-      freq_7_8 > 1 & pas_7_8_chronic == "chronic" | airway_invasion_multiple_consistencies == "yes" & subglottis_severity_rating_max > .25 & max_pas == 7 | max_pas == 8 ~ 4 # PAS 7-8, more than 50%, gross
+      freq_7_8 == 1 & subglottis_severity_rating_max <= 25 & freq_5_6 < 1 & max_pas == 7 | max_pas == 8 ~ 1, # PAS 7-8, single event, not gross, no PAS 5 or 6
+      freq_7_8 == 1 & subglottis_severity_rating_max <= 25 & freq_5_6 >= 1 & max_pas == 7 | max_pas == 8 ~ 2, # PAS 7-8, single event, not gross, additional PAS 5 or 6's
+      freq_7_8 > 1 & pas_7_8_chronic == "intermittent" & subglottis_severity_rating_max <= 25 & max_pas == 7 | max_pas == 8 ~ 2, # PAS 7-8, less than 50%, not gross
+      freq_7_8 > 1 & pas_7_8_chronic == "chronic" | airway_invasion_multiple_consistencies == "yes" & subglottis_severity_rating_max <= 25 & max_pas == 7 | max_pas == 8 ~ 3, # PAS 7-8, chronic, not gross
+      freq_7_8 >= 1 & pas_7_8_chronic == "intermittent" & subglottis_severity_rating_max > 25 & max_pas == 7 | max_pas == 8 ~ 3, # PAS 7-8, less than 50%, gross
+      freq_7_8 > 1 & pas_7_8_chronic == "chronic" | airway_invasion_multiple_consistencies == "yes" & subglottis_severity_rating_max > 25 & max_pas == 7 | max_pas == 8 ~ 4 # PAS 7-8, more than 50%, gross
     )
     ) |> 
     select(id, max_pas, safety_grade)
@@ -320,10 +326,10 @@ digest_function <- function(data, # put data frame title here
   
   df_efficiency <- df3 |> 
     group_by(id) |> 
-    mutate(efficiency_grade = case_when(max_residue_score < .10 ~ 0,
-                                        max_residue_score >= .10 & max_residue_score <= .33 ~ 1,
-                                        IDDSI == 7 & max_residue_score >= .34 & max_residue_score <= .66 ~ 2,
-                                        IDDSI == 0 | IDDSI == 4 & max_residue_score >= .34 & max_residue_score <= .66 ~ 3,
+    mutate(efficiency_grade = case_when(max_residue_score < 10 ~ 0,
+                                        max_residue_score >= 10 & max_residue_score <= 33 ~ 1,
+                                        IDDSI == 7 & max_residue_score >= 34 & max_residue_score <= 66 ~ 2,
+                                        IDDSI == 0 | IDDSI == 4 & max_residue_score >= 34 & max_residue_score <= 66 ~ 3,
                                         efficiency_group_4_freq/number_of_consistencies > 0 ~ 3,
                                         efficiency_group_4_freq/number_of_consistencies == 1 ~ 4)
     ) |> 
